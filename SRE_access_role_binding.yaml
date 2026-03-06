@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sre-access
+  namespace: APP_NAMESPACE
+subjects:
+- kind: Group
+  name: app-sre
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: app-sre-rw
+  apiGroup: rbac.authorization.k8s.io
