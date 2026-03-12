@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: app-developer-namespace-view
+rules:
+- apiGroups: [""]
+  resources:
+    - namespaces
+  verbs:
+    - get
+    - list
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: app-developer-namespace-view-binding
+subjects:
+- kind: Group
+  name: app-developers
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: app-developer-namespace-view
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: app-developer-dev-readonly
+  namespace: dev
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs:
+    - get
+    - list
+    - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app-developer-dev-readonly-binding
+  namespace: dev
+subjects:
+- kind: Group
+  name: app-developers
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: app-developer-dev-readonly
+  apiGroup: rbac.authorization.k8s.io

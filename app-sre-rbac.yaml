@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sre
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: sre-namespace-view
+rules:
+- apiGroups: [""]
+  resources:
+    - namespaces
+  verbs:
+    - get
+    - list
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: sre-namespace-view-binding
+subjects:
+- kind: Group
+  name: sre-users
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: sre-namespace-view
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sre-namespace-rw
+  namespace: sre
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - patch
+    - delete
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sre-namespace-rw-binding
+  namespace: sre
+subjects:
+- kind: Group
+  name: sre-users
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: sre-namespace-rw
+  apiGroup: rbac.authorization.k8s.io
+ 

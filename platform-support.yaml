@@ -1,0 +1,107 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: platform-support-workload-rw
+rules:
+
+# Core workload resources
+- apiGroups: [""]
+  resources:
+    - pods
+    - services
+    - configmaps
+    - secrets
+    - persistentvolumeclaims
+  verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - patch
+    - delete
+
+# Application workloads
+- apiGroups: ["apps"]
+  resources:
+    - deployments
+    - replicasets
+    - statefulsets
+    - daemonsets
+  verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - patch
+    - delete
+
+# Jobs
+- apiGroups: ["batch"]
+  resources:
+    - jobs
+    - cronjobs
+  verbs:
+    - get
+    - list
+    - watch
+    - create
+    - delete
+
+# Networking
+- apiGroups: ["networking.k8s.io"]
+  resources:
+    - ingresses
+  verbs:
+    - get
+    - list
+    - create
+    - update
+    - delete
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: platform-support-cluster-read
+rules:
+
+# Cluster visibility
+- apiGroups: [""]
+  resources:
+    - nodes
+    - namespaces
+    - persistentvolumes
+  verbs:
+    - get
+    - list
+    - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: platform-support-workload-binding
+subjects:
+- kind: Group
+  name: platform-support
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: platform-support-workload-rw
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: platform-support-cluster-read-binding
+subjects:
+- kind: Group
+  name: platform-support
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: platform-support-cluster-read
+  apiGroup: rbac.authorization.k8s.io
